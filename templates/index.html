@@ -1,0 +1,136 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Diabetes Prediction</title>
+</head>
+
+<body>
+    <header class="bg-white border-b border-gray-200">
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex lg:flex-1">
+                <a href="#" class="-m-1.5 p-1.5">
+                    <span class="sr-only">AI GANG</span>
+                    <img class="h-10 w-auto" src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo">
+                </a>
+                <p class="text-xl font-bold font-sans text-gray-900 pt-2 pl-5">Diabetes Prediction System</p>
+            </div>
+        </nav>
+    </header>
+    <div class="px-16">
+
+        {% if diabetes_result %}
+
+        <div class="text-center pb-2 pt-7">
+            <p class="text-gray-900 text-2xl font-bold font-sans">{{ diabetes_result }}</p>
+            <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-5">
+            {% if diabetes_result == "The person is diabetic." %}
+            <p class="text-gray-500">Other than diabetes, the person may be at risk of: </p>
+            {% else %}
+            <p class="text-gray-500">Although it's not diabetic, the person is still may be at risk of: </p>
+            {% endif %}
+            <p class="text-gray-500">{{ cluster_result }}</p>
+            <hr class="h-px mt-8 bg-gray-200 border-0 mb-2">
+
+        </div>
+
+        {% else %}
+
+        <p class="text-xl text-gray-700 font-sans py-7">Welcome, please key in all the informations below...</p>
+
+        {% endif %}
+
+
+        <form method="POST" action="/predict" class="mb-20">
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Left Column -->
+                <div>
+                    <div class="mb-5">
+                        <label for="pregnancies-input" class="block mb-2 text-sm font-medium text-gray-900">Pregnancies:
+                        </label>
+                        <input type="number" id="pregnancies-input" name="Pregnancies" step="1" required min="0" max="17"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('Pregnancies', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="glucose-input" class="block mb-2 text-sm font-medium text-gray-900">Glucose:
+                        </label>
+                        <input type="number" id="glucose-input" name="Glucose" step="any" required min="0" max="199"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('Glucose', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="bloodpressure-input" class="block mb-2 text-sm font-medium text-gray-900">Blood
+                            Pressure: </label>
+                        <input type="number" id="bloodpressure-input" name="BloodPressure" step="any" required max="122" min="0"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('BloodPressure', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="skinthickness-input" class="block mb-2 text-sm font-medium text-gray-900">Skin
+                            Thickness: </label>
+                        <input type="number" id="skinthickness-input" name="SkinThickness" step="any" required min="0" max="99"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('SkinThickness', '') }}">
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <div class="mb-5">
+                        <label for="insulin-input" class="block mb-2 text-sm font-medium text-gray-900">Insulin:
+                        </label>
+                        <input type="number" id="insulin-input" name="Insulin" step="any" required min="0" max="846"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('Insulin', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="bmi-input" class="block mb-2 text-sm font-medium text-gray-900">BMI: </label>
+                        <input type="number" id="bmi-input" name="BMI" step="any" required min="0" max="67.1"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('BMI', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="diabetespedigree-input"
+                            class="block mb-2 text-sm font-medium text-gray-900">Diabetes Pedigree Function: </label>
+                        <input type="number" id="diabetespedigree-input" name="DiabetesPedigreeFunction" step="any"
+                            required min="0.078" max="2.42"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('DiabetesPedigreeFunction', '') }}">
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="age-input" class="block mb-2 text-sm font-medium text-gray-900">Age: </label>
+                        <input type="number" id="age-input" name="Age" step="1" required max="81" min="21"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            value="{{ form_data.get('Age', '') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 w-48">
+                <button type="submit" name="action" value="Predict"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
+                {% if diabetes_result %}
+                    <button type="submit" name="action" value="Reset"
+                        class="text-white px-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Reset</button>
+                {% else %}
+                    <button type="reset" value="Reset"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Reset</button>
+                {% endif %}
+            </div>
+        </form>
+
+    </div>
+</body>
+
+</html>
